@@ -1,0 +1,20 @@
+#tooltip {
+    position: absolute; 
+    padding: 5px;
+    background: white;
+    border: solid gray 1px;
+    z-index: 1;
+}
+
+#tooltip.hidden {
+    display: none;
+}
+
+.axis x {
+    font-size : 14px;
+}
+
+.axis y {
+    font-size: 14px;
+    display: none;
+}

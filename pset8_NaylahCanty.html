@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PSET8</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="pset8css.css">
+
+</head>
+    
+
+<body>
+    <main class="container">
+    	<div class = "row">
+                <h2>Boston 311 Requests</h2><br>
+            <div id="bar-chart"></div>
+            <div id="tooltip" class="hidden">
+                <p> Total 311 requests: <span id=name></span></p>
+            </div>
+        </div>
+            
+
+            </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script type="text/javascript">
+        
+    	const width = 800;
+    	const height = 600; 
+    	const marginLeft = 300; 
+    	const marginRight = 30;
+    	const marginBottom = 30; 
+        const marginTop = 30; 
+        const tooltip = d3.select("#tooltip");
+
+        const svg = d3.select("#bar-chart")
+            .append("svg")
+            .attr("viewBox", [0, 0, width, height + marginBottom]);
+
+
+        function plot(data) {
+            const newArray = dataArray.map(d => d.columnName);
+            const xValues = data.map(d => d.total_count);
+            const xScale = d3.scaleLinear()
+                    .domain([0, d3.max(xValues)])
+                    .range([0, width]); 
+            const chartGroup = svg.append("g")
+                .attr("class", "axis x")
+                .attr("transform", "translate(" + marginLeft + "," + marginTop + ")")
+                .call(xAxis);
+      
+            const yValues = data.map(d => d.Name);
+            const yScale = d3.scaleBand()
+                 .domain(yValues) 
+                 .range([height, 0])
+                 .paddingInner(0.15);
+           
+            const yAxis = d3.axisLeft(yScale);
+            const chartGrouptwo = svg.append("g")
+                .attr("class", "axis y")
+                .attr("transform", "translate(" + marginLeft + "," + marginTop  + ")")
+                .call(yAxis);
+
+
+            // Bar chart visualization
+            svg.selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                    .attr("height", yScale.bandwidth())
+                    .attr("width", d => xScale(d.total_count))
+                    .attr("fill", 'blue')
+                    .attr("x", marginLeft)
+                    .attr("y", d => yScale(d.Name) + marginTop)
+                .on("mouseover", function(event, d) {
+                    tooltip.classed('hidden', false)
+                        .style("left", event.pageX + 10)
+                        .style("top", event.pageY + 10)
+                        .select("#name")
+                            .html(d.total_count)
+                })
+                .on("mousemove", function(event) {
+                    d3.select("#tooltip")          
+                })
+                .on("mouseout", function() {
+                    tooltip.classed("hidden", true)
+                });
+
+        };
+
+        d3.csv("/boston_311.csv")
+            .then(function(data) {
+                console.log(data);
+                plot(data);
+            })
+
+    </script>
+</body>
+</html>
